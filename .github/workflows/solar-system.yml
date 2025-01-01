@@ -32,10 +32,10 @@ jobs:
 
       - name: Testing the App
         timeout-minutes: 3
-        run: npm start
+        run: npm test
 
-      - name: Upload the artifacts.10th
-        uses: actions/upload-artifact@v4
-        with:
-          name: my-artifacts
-          path: artifacts.txt
+      # - name: Upload the artifacts.10th
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: my-artifacts
+      #     path: artifacts.txt
