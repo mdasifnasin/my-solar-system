@@ -11,10 +11,13 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD}}
 jobs:
   Unit-Testing:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     concurrency: 
       cancel-in-progress: true
       group: prod
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
