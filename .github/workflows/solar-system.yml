@@ -34,7 +34,7 @@ jobs:
         timeout-minutes: 3
         run: npm start
 
-      - name: Upload the artifacts
+      - name: Upload the artifacts.10th
         uses: actions/upload-artifact@v4
         with:
           name: my-artifacts
