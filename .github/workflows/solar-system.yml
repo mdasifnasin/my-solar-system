@@ -28,6 +28,7 @@ jobs:
           npm install
 
       - name: Testing the App
+        timeout-minutes: 3
         run: npm start >> artifacts.txt
 
       - name: Upload the artifacts
