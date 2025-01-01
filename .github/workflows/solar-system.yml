@@ -11,6 +11,9 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD}}
 jobs:
   Unit-Testing:
+    concurrency: 
+      cancel-in-progress: true
+      group: prod
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
