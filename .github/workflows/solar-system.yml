@@ -46,6 +46,7 @@ jobs:
           path: test-results.xml
 
   Code_Coverage:
+    needs: Unit-Testing
     name: Code Coverage Test
     # strategy:
     #   matrix:
