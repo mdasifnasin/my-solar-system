@@ -16,7 +16,8 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     # concurrency: 
     #   cancel-in-progress: false
-    #   group: prod
+    #   group: prodnpm install
+    
     runs-on: ${{matrix.os}}
     steps:
       - name: Checkout
@@ -43,3 +44,44 @@ jobs:
         with:
           name: my-artifacts
           path: test-results.xml
+
+  Code_Coverage:
+    name: Code Coverage Test
+    # strategy:
+    #   matrix:
+    #     os: [ubuntu-latest, windows-latest]
+    # # concurrency: 
+    # #   cancel-in-progress: false
+    # #   group: prodnpm install
+    
+    # runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      
+      - name: Setting up Node JS
+        uses: actions/checkout@v4.2.2
+        with:
+          node-version: '18'
+      
+      - name: Installing Dependencies
+        run: |
+          npm -v
+          node -v
+          npm install
+
+      - name: Testing the App
+        timeout-minutes: 3
+        run: npm test
+
+      - name: Test Coverage
+        timeout-minutes: 3
+        run: npm run coverage
+
+      - name: Upload the artifacts.10th
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+          retention-days: 5
