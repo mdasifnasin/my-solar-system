@@ -94,7 +94,7 @@ const app = express();
 const cors = require('cors');
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '/123')));
+app.use(express.static(path.join(__dirname, '/')));
 app.use(cors());
 
 // Static data for `/planet` response
@@ -143,4 +143,4 @@ app.listen(3000, () => {
     console.log("Server successfully running on port - 3000");
 });
 
-module.exports = app;
+module.exports = app1;
