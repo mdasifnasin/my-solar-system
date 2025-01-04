@@ -131,8 +131,6 @@ app.get('/live', function (req, res) {
         "status": "live"
     });
 });
-helllllllllllllllllllllllllllllllllllllllllll
-
 
 app.get('/ready', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
@@ -145,4 +143,4 @@ app.listen(3000, () => {
     console.log("Server successfully running on port - 3000");
 });
 
-module.exports = app1;
+module.exports = app;
