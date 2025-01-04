@@ -94,7 +94,7 @@ const app = express();
 const cors = require('cors');
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '/')));
+app.use(express.static(path.join(__dirname, '/123')));
 app.use(cors());
 
 // Static data for `/planet` response
