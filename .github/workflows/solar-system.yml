@@ -40,10 +40,12 @@ jobs:
 
       - name: Testing the App
         timeout-minutes: 3
+        id: mytest_id
         run: npm test
 
 
       - name: Upload the artifacts.10th
+        if: steps.mytest_id.outcome == 'success' || steps.mytest_id.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: my-artifacts
