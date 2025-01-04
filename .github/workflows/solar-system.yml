@@ -46,7 +46,8 @@ jobs:
 
       - name: Upload the artifacts.10th
         # if: steps.mytest_id.outcome == 'success' || steps.mytest_id.outcome == 'failure'
-        if: failure() || success()
+        # if: failure() || success()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: my-artifacts
