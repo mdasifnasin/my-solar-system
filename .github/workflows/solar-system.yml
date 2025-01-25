@@ -151,6 +151,9 @@ jobs:
         run: |
           echo "Testing the Images via wget command"
           docker ps -a
+          sleep 10
+          docker ps -a
+          docker ps
           curl -v http://127.0.0.1:3000
 
 
