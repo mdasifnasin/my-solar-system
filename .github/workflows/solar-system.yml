@@ -151,10 +151,15 @@ jobs:
           -e MONGO_PASSWORD=passwordPlaceholder \
           ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
 
+      - name: Check container logs
+        run: |
+          echo "Checking logs for my_solar-syatem container"
+          docker logs my_solar-syatem
+  
       - name: Greping the line
         run: |
-          echo "Tsting the Images via wget command"
-          wget -q -O - 127.0.0.1:3000 | grep live
+          echo "Testing the Images via wget command"
+          wget -q -O - http://127.0.0.1:3000 | grep live
 
         
 
