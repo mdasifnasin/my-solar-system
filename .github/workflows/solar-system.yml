@@ -144,14 +144,15 @@ jobs:
         run: |
           docker images
           docker ps -a
-          docker run --name my_solar-syatem -d \
+          docker run --name my_solar-syatem -d -it \
           -p 3000:3000 \
           -e MONGO_URI=uriPlaceholder \
           -e MONGO_USERNAME=usernamePlaceholder \
           -e MONGO_PASSWORD=passwordPlaceholder \
           ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
 
-          echo $IP
+      - name: Greping the line
+        run: |
           echo "Tsting the Images via wget command"
           wget -q -O - 127.0.0.1:3000 | grep live
 
