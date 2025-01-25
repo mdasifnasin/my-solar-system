@@ -140,3 +140,21 @@ jobs:
           docker images
           docker ps -a
 
+      - name: Testing the images
+        run: |
+          docker images
+          docker ps -a
+          docker build --name solar-syatem -d \
+          -p 3000:3000 \
+          -e MONGO_URI=uriPlaceholder \
+          -e MONGO_USERNAME=usernamePlaceholder \
+          -e MONGO_PASSWORD=passwordPlaceholder \
+          ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
+
+          echo $IP
+          echo "Tsting the Images via wget command"
+          wget -q -O - 127.0.0.1:3000 | grep live
+
+        
+
+
