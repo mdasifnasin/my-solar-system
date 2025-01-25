@@ -168,7 +168,7 @@ jobs:
       - name: Push the Image to Private Docker registry
         uses: docker/build-push-action@v4
         with:
-          context: .
+          # context: .
           push: true #It will push the image
           tags: |
             ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
