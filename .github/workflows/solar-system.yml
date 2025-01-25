@@ -132,7 +132,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          push: false
+          push: false #it will not push the Image to drocker reg
           tags: ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
 
       - name: Listing the images
@@ -155,6 +155,13 @@ jobs:
           docker ps -a
           docker ps
           curl -v http://127.0.0.1:3000
+
+      - name: Push the Image to Private Docker registry
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true #It will push the image
+          tags: ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
 
 
         
