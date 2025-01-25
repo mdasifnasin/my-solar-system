@@ -144,7 +144,7 @@ jobs:
         run: |
           docker images
           docker ps -a
-          docker build --name my_solar-syatem -d \
+          docker run --name my_solar-syatem -d \
           -p 3000:3000 \
           -e MONGO_URI=uriPlaceholder \
           -e MONGO_USERNAME=usernamePlaceholder \
