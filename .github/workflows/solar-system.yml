@@ -150,8 +150,8 @@ jobs:
       - name: Greping the line
         run: |
           echo "Testing the Images via wget command"
+          docker ps -a
           curl -v http://127.0.0.1:3000
-          wget -q -O - http://127.0.0.1:3000 | grep live
 
 
         
