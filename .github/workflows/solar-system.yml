@@ -146,9 +146,9 @@ jobs:
           docker ps -a
           docker run --name my_solar-syatem -d \
           -p 3000:3000 \
-          -e MONGO_URI=uriPlaceholder \
-          -e MONGO_USERNAME=usernamePlaceholder \
-          -e MONGO_PASSWORD=passwordPlaceholder \
+          -e MONGO_URI=$MONGO_URI \
+          -e MONGO_USERNAME=$MONGO_USERNAME \
+          -e MONGO_PASSWORD=$MONGO_PASSWORD \
           ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
 
       - name: Check container logs
@@ -159,6 +159,7 @@ jobs:
       - name: Greping the line
         run: |
           echo "Testing the Images via wget command"
+          curl -v http://127.0.0.1:3000
           wget -q -O - http://127.0.0.1:3000 | grep live
 
         
