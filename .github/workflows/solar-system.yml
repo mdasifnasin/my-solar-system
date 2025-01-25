@@ -51,7 +51,7 @@ jobs:
         run: npm test
 
 
-      - name: Upload the artifacts.10th
+      - name: Upload the artifacts
         # if: steps.mytest_id.outcome == 'success' || steps.mytest_id.outcome == 'failure'
         # if: failure() || success()
         if: always()
