@@ -11,15 +11,15 @@ env:
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD}}
 jobs:
   Unit-Testing:
-    services:
-      mongodb-connection:
-        image: siddharth67/mongo-db:non-prod
-        ports:
-          - 27017:27017
-        env:
-          MONGO_URI: "mongodb://localhost:27017/superData"
-          MONGO_USERNAME: non-prod-user
-          MONGO_PASSWORD: non-prod-password
+    # services:
+    #   mongodb-connection:
+    #     image: siddharth67/mongo-db:non-prod
+    #     ports:
+    #       - 27017:27017
+    #     env:
+    #       MONGO_URI: "mongodb://localhost:27017/superData"
+    #       MONGO_USERNAME: non-prod-user
+    #       MONGO_PASSWORD: non-prod-password
           
         
     strategy:
@@ -133,15 +133,18 @@ jobs:
     needs: [Unit-Testing, Code_Coverage]
     steps:
       - name: Chenckout The repo
+        id: Step_1
         uses: actions/checkout@v4.2.2
       
       - name: Login to Docker Hub
+        id: Step-2
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to GHCR Hub
+        id: Step-3
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -149,6 +152,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Build and push
+        id: Step-4
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -156,11 +160,13 @@ jobs:
           tags: ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
 
       - name: Listing the images
+        id: Step-5
         run: |
           docker images
           docker ps -a
 
       - name: Testing the images
+        id: Step-6
         run: |
           docker images
           docker ps -a
@@ -168,6 +174,7 @@ jobs:
           ${{ vars.DOCKERHUB_USERNAME }}/solar-syatem:${{ github.sha }}
 
       - name: Greping the line
+        id: Step-7
         run: |
           echo "Testing the Images via wget command"
           docker ps -a
@@ -177,6 +184,7 @@ jobs:
           curl -v http://127.0.0.1:3000
 
       - name: Push the Image to Private Docker registry
+        id: Step-8
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -185,8 +193,6 @@ jobs:
             ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
             ghcr.io/${{github.repository_owner}}/solar-syatem:${{github.sha}}
 
-      - name: Debug the password
-        run: echo "Password is ${{ secrets.GITHUB_TOKEN }}"
 
 
         
