@@ -20,3 +20,4 @@ runs:
         npm -v
         node -v
         npm install
+      shell: bash
