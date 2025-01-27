@@ -1,6 +1,6 @@
 name: NPM Cache and Install dependencies
 description: NPM Cache and Install dependencies
-author: @mdasifnasin
+author: "mdasifnasin"
 
 inputs:
   path_of_the_file:
