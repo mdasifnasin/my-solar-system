@@ -1,9 +1,17 @@
-# Container image that runs your code
-FROM alpine:3.10
+FROM node:18-alpine3.17
 
-# Copies your code file from your action repository to the filesystem path `/` of the container
-COPY entrypoint.sh /entrypoint.sh
+WORKDIR /usr/app
 
-# Code file to execute when the docker container starts up (`entrypoint.sh`)
-RUN chmod +x entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+COPY package*.json /usr/app/
+
+RUN npm install
+
+COPY . .
+
+# ENV MONGO_URI=uriPlaceholder
+# ENV MONGO_USERNAME=usernamePlaceholder
+# ENV MONGO_PASSWORD=passwordPlaceholder
+
+EXPOSE 3000
+
+CMD [ "npm", "start" ]

@@ -48,7 +48,7 @@ jobs:
         with:
           who-to-greet: 'Hi Md Asif Nasim'
       - name: Caching and installing dependencies
-        uses: ./.github/workflows/custom-action/npm_action/
+        uses: mdasifnasin/node-js-cache-and-dependencies-install@1.0-Alpha
         with:
           path_of_the_file: node_modules
       # - name: Cache NPM dependencies
