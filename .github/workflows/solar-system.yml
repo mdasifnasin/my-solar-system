@@ -44,7 +44,7 @@ jobs:
           node-version: ${{matrix.version}}
       - name: Hello world action step
         id: hello
-        uses: ./.github/workflows/custom-action/npm_action/docker_action/
+        uses: ./.github/workflows/custom-action/npm_action/dockker/action.yaml
         with:
           who-to-greet: 'Hi Md Asif Nasim'
       - name: Caching and installing dependencies
