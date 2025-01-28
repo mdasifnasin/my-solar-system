@@ -1,33 +1,209 @@
-name: Solar System Workflow
-
+name: Solar-Sytem-Unit-Testin
 on: 
   workflow_dispatch:
   push:
-    branches:
+    branches: 
       - main
-      - 'feature/*'
-    
+      - "feature/*"
+env:
+  MONGO_URI: "mongo+srv://supercluster.d83jj.mongodb.net/superData"
+  MONGO_USERNAME: ${{ vars.MONGO_USERNAME}}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD}}
 jobs:
-    unit-testing:
-        name: Unit Testing
-        runs-on: ubuntu-latest
-        steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v4
-
-        - name: Setup NodeJS Version
-          uses: actions/setup-node@v3
-          with:
-            node-version: 20
-    
-        - name: Install Dependencies
-          run: npm install
-    
-        - name: Unit Testing
-          run: npm test
+  Unit-Testing:
+    # services:
+    #   mongodb-connection:
+    #     image: siddharth67/mongo-db:non-prod
+    #     ports:
+    #       - 27017:27017
+    #     env:
+    #       MONGO_URI: "mongodb://localhost:27017/superData"
+    #       MONGO_USERNAME: non-prod-user
+    #       MONGO_PASSWORD: non-prod-password
           
-        - name: Archive Test Result
-          uses: actions/upload-artifact@v3
-          with:
-            name: Mocha-Test-Result
-            path: test-results.xml
+        
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        version: [18]
+        # exclude:
+        #   - os: windows-latest
+        #   - version: [18,20,22]
+    # concurrency: 
+    #   cancel-in-progress: false
+    #   group: prodnpm install
+    
+    runs-on: ${{matrix.os}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      
+      - name: Setting up Node JS
+        uses: actions/checkout@v4.2.2
+        with:
+          node-version: ${{matrix.version}}
+          
+      - name: Caching and installing dependencies
+        uses: mdasifnasin/node-js-cache-and-dependencies-install@1.0-Alpha
+        with:
+          path_of_the_file: node_modules
+      # - name: Cache NPM dependencies
+      #   uses: actions/cache@v4.2.0
+      #   with:
+      #     path: node_modules
+      #     key: ${{ runner.os}}-node_modules-${{ hashFiles('package-lock.json')}}
+      
+      
+      # - name: Installing Dependencies
+      #   run: |
+      #     npm -v
+      #     node -v
+      #     npm install
+
+      - name: Testing the App
+        timeout-minutes: 3
+        id: mytest_id
+        run: npm test
+
+
+      - name: Upload the artifacts
+        # if: steps.mytest_id.outcome == 'success' || steps.mytest_id.outcome == 'failure'
+        # if: failure() || success()
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-artifacts
+          path: test-results.xml
+
+  Code_Coverage:
+    # needs: Unit-Testing
+    name: Code Coverage Test
+    # strategy:
+    #   matrix:
+    #     os: [ubuntu-latest, windows-latest]
+    # # concurrency: 
+    # #   cancel-in-progress: false
+    # #   group: prodnpm install
+    
+    # runs-on: ${{matrix.os}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      
+      - name: Setting up Node JS
+        uses: actions/checkout@v4.2.2
+        with:
+          node-version: '18'
+
+          
+      # - name: Cache NPM dependencies
+      #   uses: actions/cache@v4.2.0
+      #   with:
+      #     path: node_modules
+      #     key: ${{ runner.os}}-node_modules-${{ hashFiles('package-lock.json')}}
+      
+      # - name: Installing Dependencies
+      #   run: |
+      #     npm -v
+      #     node -v
+      #     npm install
+      - name: Caching and installing dependencies
+        uses: ./.github/workflows/custom-action/npm_action/
+        with:
+          path_of_the_file: node_modules
+
+      - name: Testing the App
+        timeout-minutes: 3
+        run: npm test
+
+      - name: Test Coverage
+        timeout-minutes: 3
+        run: |
+          npm run coverage
+        continue-on-error: true
+
+      - name: Upload the artifacts.10th
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+          retention-days: 8
+
+  Dokcer_login:
+    name: Login_to_Dockerhub
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    permissions: 
+      packages: write
+    needs: [Unit-Testing, Code_Coverage]
+    steps:
+      - name: Chenckout The repo
+        id: Step_1
+        uses: actions/checkout@v4.2.2
+      
+      - name: Login to Docker Hub
+        id: Step-2
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          # password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_PASS }}
+
+      - name: Login to GHCR Hub
+        id: Step-3
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build and push
+        id: Step-4
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: false #it will not push the Image to drocker reg
+          tags: ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
+
+      - name: Listing the images
+        id: Step-5
+        run: |
+          docker images
+          docker ps -a
+
+      - name: Testing the images
+        id: Step-6
+        run: |
+          docker images
+          docker ps -a
+          docker run --name my_solar-system -d -p 3000:3000 \
+          ${{ vars.DOCKERHUB_USERNAME }}/solar-syatem:${{ github.sha }}
+
+      - name: Greping the line
+        id: Step-7
+        run: |
+          echo "Testing the Images via wget command"
+          docker ps -a
+          sleep 10
+          docker ps -a
+          docker ps
+          curl -v http://127.0.0.1:3000
+
+      - name: Push the Image to Private Docker registry
+        id: Step-8
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true #It will push the image
+          tags: |
+            ${{vars.DOCKERHUB_USERNAME}}/solar-syatem:${{github.sha}}
+            ghcr.io/${{github.repository_owner}}/solar-syatem:${{github.sha}}
+
+
+
+        
+
+
